@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Bondhu — Social</title>
+<style>
+:root{--blue:#1877f2;--bg:#f0f2f5;--ink:#1c1e21;--muted:#65676b;--card:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif;color:var(--ink)}
+header{position:sticky;top:0;background:#fff;z-index:5;padding:12px 15px;box-shadow:0 1px 4px #0001}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{font-size:28px;font-weight:800;color:var(--blue);letter-spacing:-1px}.round{border:0;border-radius:50%;width:40px;height:40px;background:#eef0f3;font-size:18px}
+.search{width:100%;border:0;background:#f0f2f5;border-radius:22px;padding:11px 14px;font-size:15px;outline:none}
+nav{display:flex;justify-content:space-around;background:#fff;border-bottom:1px solid #ddd;position:sticky;top:65px;z-index:4}
+nav button{flex:1;border:0;background:#fff;padding:12px 2px;color:var(--muted);font-size:20px;border-bottom:3px solid transparent}
+nav button.active{color:var(--blue);border-color:var(--blue)}
+main{max-width:620px;margin:12px auto 84px;padding:0 10px}
+.card{background:var(--card);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 1px 2px #0000}
+.compose{display:flex;gap:10px;align-items:center}.avatar{width:42px;height:42px;flex:none;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#1877f2,#8b5cf6);color:#fff;font-weight:800}
+.compose input{flex:1;min-width:0;border:0;border-radius:22px;background:#f0f2f5;padding:12px;font-size:15px}
+.actions{display:flex;gap:8px;margin-top:12px;border-top:1px solid #eee;padding-top:10px}.actions button,.post-actions button{flex:1;border:0;background:#fff;color:var(--muted);font-weight:600;padding:8px 2px;border-radius:8px}
+.actions button:active,.post-actions button:active{background:#eef4ff}
+.storyrow{display:flex;gap:10px;overflow-x:auto}.story{min-width:92px;height:132px;border-radius:12px;color:white;padding:9px;display:flex;align-items:flex-end;font-size:13px;font-weight:700;background:linear-gradient(160deg,#60a5fa,#4338ca)}
+.story:nth-child(2){background:linear-gradient(160deg,#f97316,#be123c)}.story:nth-child(3){background:linear-gradient(160deg,#34d399,#047857)}.story:nth-child(4){background:linear-gradient(160deg,#c084fc,#6d28d9)}
+.post-head{display:flex;align-items:center;gap:10px}.post-name{font-weight:750}.time{font-size:12px;color:var(--muted)}.dots{margin-left:auto;border:0;background:white;font-size:22px;color:var(--muted)}
+.post-text{line-height:1.6;white-space:pre-wrap;margin:13px 0}.post-art{height:210px;border-radius:10px;display:grid;place-items:center;color:white;font-size:26px;font-weight:800;text-align:center;padding:20px;background:linear-gradient(135deg,#0f766e,#38bdf8)}
+.post-art.purple{background:linear-gradient(135deg,#7c3aed,#ec4899)}.post-art.sun{background:linear-gradient(135deg,#f59e0b,#ef4444)}
+.stats{font-size:13px;color:var(--muted);display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee}
+.post-actions{display:flex;gap:5px;padding-top:7px}.post-actions button{font-size:14px}.liked{color:var(--blue)!important}
+.section{display:none}.section.active{display:block}.empty{text-align:center;padding:35px 15px;color:var(--muted)}
+.bottom{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;background:#fff;border-top:1px solid #ddd;padding:8px 0 calc(8px + env(safe-area-inset-bottom));z-index:6}
+.bottom button{border:0;background:#fff;color:var(--muted);font-size:12px;display:grid;gap:3px;justify-items:center;min-width:54px}.bottom span{font-size:21px}.bottom button.active{color:var(--blue)}
+.primary{background:var(--blue)!important;color:#fff!important;border:0;border-radius:9px;padding:11px 14px;font-weight:700}
+.modal{display:none;position:fixed;inset:0;background:#0007;z-index:10;align-items:center;justify-content:center;padding:18px}.modal.open{display:flex}.modalbox{background:#fff;border-radius:15px;padding:18px;width:min(100%,480px)}textarea{width:100%;min-height:120px;resize:vertical;border:1px solid #ddd;border-radius:10px;padding:12px;font:inherit;margin:12px 0}.modalfoot{display:flex;gap:10px;justify-content:flex-end}
+@media(min-width:700px){main{margin-top:18px}.bottom{display:none}}
+</style>
+</head>
+<body>
+<header><div class="top"><div class="brand">Bondhu</div><button class="round" aria-label="Notifications" onclick="showNotice()">🔔</button><button class="round" aria-label="Profile" onclick="switchTab('profile')">👤</button></div></header>
+<nav>
+<button class="active" data-tab="home" onclick="switchTab('home')">⌂</button>
+<button data-tab="friends" onclick="switchTab('friends')">♧</button>
+<button data-tab="video" onclick="switchTab('video')">▶</button>
+<button data-tab="messages" onclick="switchTab('messages')">✉</button>
+</nav>
+<main>
+<section class="section active" id="home">
+<div class="card"><div class="compose"><div class="avatar">B</div><input id="quickPost" placeholder="কী ভাবছো? একটি পোস্ট করো..." onclick="openComposer()" readonly></div><div class="actions"><button onclick="openComposer()">📝 পোস্ট</button><button onclick="openComposer()">🖼️ ছবি</button><button onclick="openComposer()">📍 অনুভূতি</button></div></div>
+<div class="card"><div class="storyrow"><div class="story" onclick="showNotice()">＋<br>স্টোরি তৈরি</div><div class="story">🌄<br>রাফি</div><div class="story">🎧<br>সুমাইয়া</div><div class="story">⚽<br>আরিফ</div></div></div>
+<div id="feed">
+<article class="card post"><div class="post-head"><div class="avatar">R</div><div><div class="post-name">রাফি হাসান</div><div class="time">২ ঘণ্টা আগে · 🌐</div></div><button class="dots" onclick="showNotice()">···</button></div><p class="post-text">ছোট ছোট ভালো মুহূর্তগুলোই জীবনের সবচেয়ে সুন্দর স্মৃতি। ❤️ সবাই ভালো থেকো!</p><div class="post-art">ভালো থাকুক বন্ধুত্ব ✨</div><div class="stats"><span>👍 ❤️ <span class="likes">24</span></span><span>৮টি মন্তব্য</span></div><div class="post-actions"><button onclick="likePost(this)">👍 ভালো লেগেছে</button><button onclick="commentPost()">💬 মন্তব্য</button><button onclick="sharePost()">↗ শেয়ার</button></div></article>
+<article class="card post"><div class="post-head"><div class="avatar" style="background:linear-gradient(135deg,#f97316,#be123c)">S</div><div><div class="post-name">সুমাইয়া আক্তার</div><div class="time">৫ ঘণ্টা আগে · 🌐</div></div><button class="dots" onclick="showNotice()">···</button></div><p class="post-text">নিজের স্বপ্নের দিকে এগিয়ে যাও—একদিন পরিশ্রমের ফল ঠিকই পাবে। 🌸</p><div class="post-art purple">স্বপ্ন দেখো<br>এগিয়ে চলো</div><div class="stats"><span>👍 ❤️ <span class="likes">51</span></span><span>১২টি মন্তব্য</span></div><div class="post-actions"><button onclick="likePost(this)">👍 ভালো লেগেছে</button><button onclick="commentPost()">💬 মন্তব্য</button><button onclick="sharePost()">↗ শেয়ার</button></div></article>
+</div>
+</section>
+<section class="section" id="friends"><div class="card"><h3>👥 বন্ধু খুঁজুন</h3><input class="search" placeholder="নাম দিয়ে খুঁজুন..." oninput="searchFriends(this.value)"></div><div id="friendList"><div class="card compose"><div class="avatar">A</div><div style="flex:1"><b>আরিফ রহমান</b><div class="time">২ জন মিউচুয়াল বন্ধু</div></div><button class="primary" onclick="friendAction(this)">বন্ধু যোগ</button></div><div class="card compose"><div class="avatar">N</div><div style="flex:1"><b>নাবিলা ইসলাম</b><div class="time">৫ জন মিউচুয়াল বন্ধু</div></div><button class="primary" onclick="friendAction(this)">বন্ধু যোগ</button></div></div></section>
+<section class="section" id="video"><div class="card"><h3>▶ ভিডিও</h3><p>এখানে বন্ধুদের শেয়ার করা ভিডিও দেখা যাবে।</p><div class="post-art">ভিডিও ফিড 🎬</div><p class="time">এটি এখন ডেমো স্ক্রিন। ভিডিও আপলোড/প্লে করার জন্য সার্ভার যুক্ত করতে হবে।</p></div></section>
+<section class="section" id="messages"><div class="card"><h3>✉ মেসেজ</h3><p>বন্ধুদের সঙ্গে ব্যক্তিগত কথোপকথন।</p><div class="card compose"><div class="avatar">R</div><div style="flex:1"><b>রাফি হাসান</b><div class="time">হ্যালো! কেমন আছো?</div></div><button onclick="showNotice()">খুলুন</button></div><div class="card compose"><div class="avatar">S</div><div style="flex:1"><b>সুমাইয়া আক্তার</b><div class="time">শেষ দেখা: আজ</div></div><button onclick="showNotice()">খুলুন</button></div></div></section>
+<section class="section" id="profile"><div class="card" style="text-align:center;padding:28px"><div class="avatar" style="margin:auto;width:76px;height:76px;font-size:28px">B</div><h2>তোমার প্রোফাইল</h2><p class="time">Bondhu-তে স্বাগতম!</p><button class="primary" onclick="editProfile()">প্রোফাইল সম্পাদনা</button></div><div class="card"><b>পোস্ট</b><p class="time">তোমার পোস্টগুলো এখানে দেখা যাবে।</p></div></section>
+</main>
+<div class="bottom"><button class="active" data-tab="home" onclick="switchTab('home')"><span>⌂</span>হোম</button><button data-tab="friends" onclick="switchTab('friends')"><span>♧</span>বন্ধু</button><button data-tab="video" onclick="switchTab('video')"><span>▶</span>ভিডিও</button><button data-tab="messages" onclick="switchTab('messages')"><span>✉</span>মেসেজ</button><button data-tab="profile" onclick="switchTab('profile')"><span>👤</span>প্রোফাইল</button></div>
+<div class="modal" id="composer"><div class="modalbox"><h3>নতুন পোস্ট</h3><textarea id="postText" placeholder="কী ভাবছো?"></textarea><div class="modalfoot"><button onclick="closeComposer()">বাতিল</button><button class="primary" onclick="publishPost()">পোস্ট করুন</button></div></div></div>
+<script>
+function switchTab(tab){document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===tab));document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));window.scrollTo({top:0,behavior:'smooth'})}
+function openComposer(){document.getElementById('composer').classList.add('open');setTimeout(()=>document.getElementById('postText').focus(),100)}
+function closeComposer(){document.getElementById('composer').classList.remove('open')}
+function publishPost(){let t=document.getElementById('postText').value.trim();if(!t){alert('আগে পোস্টে কিছু লিখুন।');return}let a=document.createElement('article');a.className='card post';a.innerHTML='<div class="post-head"><div class="avatar">B</div><div><div class="post-name">তুমি</div><div class="time">এইমাত্র · 🌐</div></div></div><p class="post-text"></p><div class="stats"><span>👍 <span class="likes">0</span></span><span>০টি মন্তব্য</span></div><div class="post-actions"><button onclick="likePost(this)">👍 ভালো লেগেছে</button><button onclick="commentPost()">💬 মন্তব্য</button><button onclick="sharePost()">↗ শেয়ার</button></div>';a.querySelector('.post-text').textContent=t;document.getElementById('feed').prepend(a);document.getElementById('postText').value='';closeComposer();switchTab('home')}
+function likePost(b){let p=b.closest('.post'),n=p.querySelector('.likes');if(!n){alert('পোস্টে লাইক যোগ করা হয়েছে।');b.classList.toggle('liked');return}let liked=b.classList.toggle('liked');n.textContent=Math.max(0,Number(n.textContent)+(liked?1:-1));b.textContent=liked?'👍 ভালো লেগেছে':'👍 ভালো লেগেছে'}
+function commentPost(){let c=prompt('তোমার মন্তব্য লিখো:');if(c&&c.trim())alert('ডেমোতে মন্তব্য লেখা হয়েছে: '+c.trim()+' (সার্ভার যুক্ত করলে সবার কাছে দেখা যাবে)')}
+function sharePost(){if(navigator.share)navigator.share({title:'Bondhu',text:'Bondhu-তে এই পোস্টটি দেখো!'}).catch(()=>{});else alert('শেয়ার ফিচারটি ডেমো মোডে আছে।')}
+function friendAction(b){b.textContent=b.textContent==='বন্ধু যোগ'?'অনুরোধ পাঠানো হয়েছে':'বন্ধু যোগ';b.style.background=b.textContent==='বন্ধু যোগ'?'#1877f2':'#e4e6eb';b.style.color=b.textContent==='বন্ধু যোগ'?'white':'#1c1e21'}
+function searchFriends(q){document.querySelectorAll('#friendList .card').forEach(c=>c.style.display=c.innerText.toLowerCase().includes(q.toLowerCase())?'flex':'none')}
+function showNotice(){alert('এটি Bondhu অ্যাপের ডেমো। এই ফিচার চালু করতে পরের ধাপে সার্ভার/অ্যাকাউন্ট সিস্টেম যুক্ত করতে হবে।')}
+function editProfile(){let n=prompt('তোমার নাম লিখো:');if(n&&n.trim()){document.querySelector('#profile h2').textContent=n.trim();alert('ডেমো প্রোফাইলের নাম বদলেছে।')}}
+document.getElementById('composer').addEventListener('click',e=>{if(e.target.id==='composer')closeComposer()});
+</script>
+</body>
+</html>
